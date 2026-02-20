@@ -59,9 +59,10 @@ a:hover{text-decoration:underline}
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   overflow: hidden;
-  min-height: 80vh;   
+  min-height: 60vh;   
   display: flex;
   flex-direction: column;
+  position: relative;
 
 }
 
@@ -148,7 +149,7 @@ a:hover{text-decoration:underline}
 /* content */
 .term-body{
   flex: 1;
-  display: flex;
+  overflow-y:auto;
 }
 
 .hero{
@@ -353,6 +354,7 @@ article pre code{padding:0;border:none;background:transparent}
   height: 100%;
 }
 
+
 /* Responsive: sidebar becomes top stack */
 @media (max-width: 860px){
   .app{grid-template-columns: 1fr;}
@@ -408,3 +410,74 @@ article pre code{padding:0;border:none;background:transparent}
   background: rgba(17,17,27,.35);
   overflow: auto;
 }
+
+/* Bottom command bar */
+.cmdbar{
+position: static;      
+ padding-top: 10px;
+   }
+
+.cmdbar-inner{
+
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(205,214,244,.10);
+  background: rgba(17,17,27,.55);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 60px rgba(0,0,0,.35);
+}
+
+.cmdbar-prompt{
+  color: var(--green);
+  opacity: .9;
+  font-weight: 700;
+}
+
+.cmdbar-input{
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.cmdbar-input::placeholder{
+  color: var(--subtext0);
+  opacity: .8;
+}
+
+.cmdbar-btn{
+  border: 1px solid rgba(205,214,244,.10);
+  background: rgba(49,50,68,.25);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.cmdbar-hint{
+  pointer-events: auto;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(205,214,244,.10);
+  background: rgba(17,17,27,.55);
+  backdrop-filter: blur(12px);
+  color: var(--subtext0);
+  font-size: 12px;
+}
+.cmdbar-hint code{
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(205,214,244,.10);
+  background: rgba(49,50,68,.22);
+  color: var(--text);
+}
+
+

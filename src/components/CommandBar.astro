@@ -1,0 +1,120 @@
+---
+const placeholder = "Type /help or search…  ( /go writeups | /search smb | /tag privesc )";
+---
+
+<div class="cmdbar" id="cmdbar">
+  <div class="cmdbar-inner">
+    <span class="cmdbar-prompt">$</span>
+    <input
+      id="cmdbar-input"
+      class="cmdbar-input"
+      type="text"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder={placeholder}
+    />
+    <button id="cmdbar-run" class="cmdbar-btn" type="button">↵</button>
+  </div>
+
+  <div class="cmdbar-hint" id="cmdbar-hint" hidden></div>
+</div>
+
+<script is:inline>
+  const input = document.getElementById("cmdbar-input");
+  const hint = document.getElementById("cmdbar-hint");
+  const runBtn = document.getElementById("cmdbar-run");
+
+  function showHint(html) {
+    hint.hidden = false;
+    hint.innerHTML = html;
+  }
+  function hideHint() {
+    hint.hidden = true;
+    hint.innerHTML = "";
+  }
+
+  function go(path) {
+    if (!path.startsWith("/")) path = "/" + path;
+    window.location.href = path;
+  }
+
+  function runCommand(raw) {
+    const q = raw.trim();
+    if (!q) return;
+
+    // commands
+    if (q === "/help" || q === "help") {
+      showHint(`
+        <div><b>Commands</b></div>
+        <div><code>/go</code> home | writeups | about</div>
+        <div><code>/search</code> &lt;query&gt;</div>
+        <div><code>/tag</code> &lt;tag&gt;</div>
+        <div><code>clear</code></div>
+      `);
+      return;
+    }
+
+    if (q === "clear") {
+      input.value = "";
+      hideHint();
+      return;
+    }
+
+    const [cmd, ...rest] = q.split(" ");
+    const arg = rest.join(" ").trim();
+
+    if (cmd === "/go") {
+      if (!arg) return showHint(`Usage: <code>/go writeups</code>`);
+      if (arg === "home") return go("/");
+      if (arg === "writeups") return go("/writeups");
+      if (arg === "about") return go("/about");
+      return go("/" + arg);
+    }
+
+    if (cmd === "/search") {
+      if (!arg) return showHint(`Usage: <code>/search smb</code>`);
+      // You can later implement live filtering on /writeups. For now, route to /writeups?q=
+      return go(`/writeups?q=${encodeURIComponent(arg)}`);
+    }
+
+    if (cmd === "/tag") {
+      if (!arg) return showHint(`Usage: <code>/tag privesc</code>`);
+      return go(`/writeups?tag=${encodeURIComponent(arg)}`);
+    }
+
+    // default: treat as search
+    return go(`/writeups?q=${encodeURIComponent(q)}`);
+  }
+
+  // submit
+  runBtn.addEventListener("click", () => runCommand(input.value));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") runCommand(input.value);
+    if (e.key === "Escape") { input.blur(); hideHint(); }
+  });
+
+  // global shortcut: "/" focuses it
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== input) {
+      e.preventDefault();
+      input.focus();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    const v = input.value.trim();
+    if (!v) return hideHint();
+    if (v === "/" || v.startsWith("/h")) {
+      showHint(`Try <code>/help</code>`);
+      return;
+    }
+    if (v.startsWith("/go")) showHint(`Examples: <code>/go writeups</code>, <code>/go about</code>`);
+    else if (v.startsWith("/search")) showHint(`Example: <code>/search smb</code>`);
+    else if (v.startsWith("/tag")) showHint(`Example: <code>/tag privesc</code>`);
+    else showHint(`Press <b>Enter</b> to search: <code>${v}</code>`);
+  });
+</script>

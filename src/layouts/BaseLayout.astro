@@ -2,6 +2,7 @@
 import "../styles/terminal.css";
 import SidebarLayout from "../components/SidebarLayout.astro";
 import { buildSidebarItems, activeKeyFromPath } from "../lib/sidebar";
+import CommandBar from "../components/CommandBar.astro";
 
 const {
   title = "tebii.dev",
@@ -31,23 +32,32 @@ const active = activeKeyFromPath(Astro.url.pathname);
   </head>
 
   <body>
+
     <div class="page">
+
       <div class="term">
+
         <div class="term-topbar">
           <div class="term-tabs">
             <span class="term-tab active">{title}</span>
           </div>
           <div class="term-actions" aria-hidden="true">
-            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="dot y"></span><span class="dot g"></span><span class="dot r"></span>
           </div>
         </div>
 
         <div class="term-body">
+
           <SidebarLayout title="tebii.dev" active={active} items={sidebarItems}>
             <slot />
+
           </SidebarLayout>
+
+<CommandBar />
         </div>
+
       </div>
+
     </div>
-  </body>
+</body>
 </html>
