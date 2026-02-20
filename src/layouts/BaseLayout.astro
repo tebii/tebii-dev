@@ -1,0 +1,52 @@
+---
+import "../styles/terminal.css";
+import SidebarLayout from "../components/SidebarLayout.astro";
+import { buildSidebarItems, activeKeyFromPath } from "../lib/sidebar";
+
+const {
+  title = "tebii.dev",
+  description = "Cybersecurity writeups, HTB walkthroughs, and bug bounty research.",
+  canonicalPath,
+} = Astro.props;
+
+const canonical = canonicalPath
+  ? new URL(canonicalPath, Astro.site ?? "https://tebii.dev").toString()
+  : undefined;
+
+// Auto sidebar + active tab based on URL
+const sidebarItems = await buildSidebarItems();
+const active = activeKeyFromPath(Astro.url.pathname);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#1e1e2e" />
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="term">
+        <div class="term-topbar">
+          <div class="term-tabs">
+            <span class="term-tab active">{title}</span>
+          </div>
+          <div class="term-actions" aria-hidden="true">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          </div>
+        </div>
+
+        <div class="term-body">
+          <SidebarLayout title="tebii.dev" active={active} items={sidebarItems}>
+            <slot />
+          </SidebarLayout>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

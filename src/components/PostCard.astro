@@ -1,0 +1,22 @@
+---
+const { post } = Astro.props;
+const d = post.data;
+const dateStr = d.date instanceof Date ? d.date.toDateString() : String(d.date);
+---
+
+<a class="card" href={`/writeups/${post.slug}`}>
+  <h2 style="margin:0 0 6px;font-size:18px">{d.title}</h2>
+  {d.summary && <p style="margin:0;color:var(--subtext0)">{d.summary}</p>}
+
+  <div class="meta">
+    <span>{dateStr}</span>
+    {d.platform && <span>• {d.platform}</span>}
+    {d.difficulty && <span>• {d.difficulty}</span>}
+  </div>
+
+  {d.tags?.length ? (
+    <div class="tags">
+      {d.tags.slice(0, 6).map((t) => <span class="tag">#{t}</span>)}
+    </div>
+  ) : null}
+</a>

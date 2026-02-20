@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("writeups");
+  return posts
+    .filter((p) => !p.data.draft)
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const dateStr = post.data.date.toDateString();
+---
+
+<BaseLayout
+  title={`${post.data.title} • tebii.dev`}
+  description={post.data.summary ?? "Cybersecurity writeup"}
+  canonicalPath={`/writeups/${post.slug}`}
+>
+  <article class="article">
+    <h1>{post.data.title}</h1>
+    <div class="meta">
+      <span>{dateStr}</span>
+      {post.data.platform && <span>• {post.data.platform}</span>}
+      {post.data.difficulty && <span>• {post.data.difficulty}</span>}
+    </div>
+
+    {post.data.tags?.length ? (
+      <div class="tags" style="margin-top:12px">
+        {post.data.tags.map((t) => (
+          <span class="tag">#{t}</span>
+        ))}
+      </div>
+    ) : null}
+
+    <hr class="sep" />
+
+    <Content />
+  </article>
+</BaseLayout>

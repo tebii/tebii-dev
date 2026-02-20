@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getCollection } from "astro:content";
+
+const writeups = (await getCollection("writeups"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+---
+
+<BaseLayout
+  title="Writeups"
+  canonicalPath="/writeups"
+  active="writeups"
+>
+  <section class="hero">
+    <h1>Writeups</h1>
+    <p>some scribbles here and there</p>
+  </section>
+
+  <section class="grid">
+    {writeups.map((p) => <PostCard post={p} />)}
+  </section>
+</BaseLayout>

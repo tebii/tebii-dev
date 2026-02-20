@@ -1,0 +1,54 @@
+---
+const {
+  title = "tebii.dev",
+  active = "writeups", // "writeups" | "bug-bounty" | "notes"
+  items = [],          // [{ label, href, count?, children? }]
+} = Astro.props;
+
+/**
+ * items shape:
+ * [
+ *  { label: "Writeups", href: "/writeups", children: [
+ *      { label: "HTB", href: "/writeups#htb" },
+ *      { label: "Web", href: "/writeups#web" },
+ *    ]
+ *  }
+ * ]
+ */
+---
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-title">
+      <div class="side-dot" aria-hidden="true"></div>
+      <div>
+        <div class="side-brand">{title}</div>
+        <div class="side-sub">some stuff that I write</div>
+      </div>
+    </div>
+
+    <nav class="tree">
+      {items.map((it) => (
+        <div class="tree-group">
+          <a class={`tree-item ${active === it.key ? "active" : ""}`} href={it.href}>
+            <span class="tree-label">{it.label}</span>
+            {typeof it.count === "number" ? <span class="tree-count">{it.count}</span> : null}
+          </a>
+
+          {it.children?.length ? (
+            <div class="tree-children">
+              {it.children.map((c) => (
+                <a class="tree-child" href={c.href}>{c.label}</a>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ))}
+    </nav>
+
+  </aside>
+
+  <section class="content">
+    <slot />
+  </section>
+</div>
