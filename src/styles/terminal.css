@@ -423,9 +423,7 @@ position: static;
   padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(205,214,244,.10);
-  background: rgba(17,17,27,.55);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 18px 60px rgba(0,0,0,.35);
+  background: rgba(17,17,27,.22);
 }
 
 .cmdbar-prompt{

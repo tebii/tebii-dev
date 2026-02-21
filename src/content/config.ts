@@ -7,7 +7,7 @@ const writeups = defineCollection({
     date: z.date(),
     tags: z.array(z.string()).default([]),
     platform: z.string().optional(),
-    difficulty: z.enum(["Easy", "Medium", "Hard"]).optional(),
+    difficulty: z.string().optional(),
     draft: z.boolean().default(false),
     summary: z.string().optional(),
   }),

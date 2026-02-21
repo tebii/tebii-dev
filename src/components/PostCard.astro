@@ -6,7 +6,7 @@ const dateStr = d.date instanceof Date ? d.date.toDateString() : String(d.date);
 
 <a class="card" href={`/writeups/${post.slug}`}>
   <h2 style="margin:0 0 6px;font-size:18px">{d.title}</h2>
-  {d.summary && <p style="margin:0;color:var(--subtext0)">{d.summary}</p>}
+  {d.summary && <p style="margin:0;color:var(--subtext0)">{"tl;dr " + d.summary}</p>}
 
   <div class="meta">
     <span>{dateStr}</span>

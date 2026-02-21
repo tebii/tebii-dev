@@ -4,26 +4,45 @@ import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("writeups")).filter((p) => !p.data.draft);
+
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.data.slug ?? post.slug }, // ✅ prefer frontmatter slug
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+const slug = post.data.slug ?? post.slug;
+const d = post.data;
+const dateStr = d.date instanceof Date ? d.date.toDateString() : String(d.date);
+
 ---
 
 <BaseLayout
-  title={post.data.title}
-  canonicalPath={`/writeups/${post.slug}`}
-  description={post.data.description ?? ""}
+    title={"tebii.dev / writeups / " + post.data.title}
+  canonicalPath={`/writeups/${slug}`}
+  description={post.data.description ?? post.data.summary ?? ""}
 >
   <article class="prose">
     <header class="post-header">
       <h1>{post.data.title}</h1>
-      {post.data.description && <p class="post-desc">{post.data.description}</p>}
-    </header>
+      {d.summary && <p style="margin:0;color:var(--subtext0)">{"tl;dr " + d.summary}</p>}
+
+       <div class="meta">
+          <span>{dateStr}</span>
+          {d.platform && <span>• {d.platform}</span>}
+          {d.difficulty && <span>• {d.difficulty}</span>}
+        </div>
+
+  {d.tags?.length ? (
+    <div class="tags">
+      {d.tags.slice(0, 6).map((t) => <span class="tag">#{t}</span>)}
+    </div>
+  ) : null}
+
+       </header>
 
     <div class="post-body">
       <Content />

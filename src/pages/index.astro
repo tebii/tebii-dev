@@ -9,10 +9,6 @@ const writeups = (await getCollection("writeups"))
 
 const latest = writeups.slice(0, 6);
 
-const sidebarItems = [
-  { key: "home", label: "Home", href: "/"},
-  { key: "writeups", label: "Writeups", href: "/writeups", count: writeups.length },
-];
 ---
 
 <BaseLayout
@@ -32,7 +28,7 @@ const sidebarItems = [
 
   <section style="margin-top:14px">
     <h2 style="margin:0 0 10px;font-size:16px;color:var(--subtext1)">
-      Latest writeups
+      latest writeups
     </h2>
 
     {latest.length ? (
@@ -41,7 +37,7 @@ const sidebarItems = [
       </div>
     ) : (
       <div class="card">
-        <h2 style="margin:0 0 6px;font-size:18px">No posts yet</h2>
+        <h2 style="margin:0 0 6px;font-size:18px">no posts yet :(</h2>
       </div>
     )}
   </section>

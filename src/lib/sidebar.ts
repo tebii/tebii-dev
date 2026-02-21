@@ -13,8 +13,8 @@ export async function buildSidebarItems(): Promise<SidebarItem[]> {
   const writeups = (await getCollection("writeups")).filter((p) => !p.data.draft);
 
   return [
-    { key: "home", label: "Home", href: "/" },
-    { key: "writeups", label: "Writeups", href: "/writeups", count: writeups.length },
+    { key: "home", label: "home", href: "/" },
+    { key: "writeups", label: "writeups", href: "/writeups", count: writeups.length },
   ];
 }
 
