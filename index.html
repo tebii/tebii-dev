@@ -1,0 +1,189 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+  .term {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #7dcbff;
+    background: #0d1117;
+    padding: 2rem 2.5rem;
+    border-radius: 8px;
+    max-width: 680px;
+    min-height: 460px;
+    box-sizing: border-box;
+    margin: 0;
+  }
+  .dim { color: #4a5a40; }
+  .bright { 
+    color: #7dcbff; 
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    
+}
+  .link-row { display: flex; gap: 0; align-items: baseline; margin: 4px 0; }
+  .link-label { color: #2c4759; min-width: 120px; }
+  .link-val { color: #7dcbff; text-decoration: none;}
+  .link-val:hover { color: #2c4759; border-bottom-color: #7fba5a; }
+  .sep { color: #2c4759; margin: 1rem 0; }
+  .status { color: #4a5a40; font-size: 11px; margin-top: 1.5rem; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+body {
+  background-color: #0d1117;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem 0;
+  box-sizing: border-box;
+}
+.ascii {
+   font-family: Courier;
+   color: white;
+   font-size:8pt;
+   font-weight: bold;
+}
+</style>
+
+<body>
+  <script>
+  // --- custom cursor ---
+  const cursor = document.createElement('img');
+  cursor.src = './silverwing.png';
+  cursor.style.cssText = `
+    position: fixed;
+    width: 64px;
+    pointer-events: none;
+    z-index: 9999;
+    image-rendering: pixelated;
+    transform: translate(8px, 8px);
+  `;
+  document.body.appendChild(cursor);
+
+  // --- particle trail ---
+  const chars = ['*', '+', '·', 'x', '░', '▒'];
+  let last = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    // move sprite
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+
+    // throttle particles
+    const now = Date.now();
+    if (now - last < 40) return;
+    last = now;
+
+    // spawn particle
+    const el = document.createElement('span');
+    el.textContent = chars[Math.floor(Math.random() * chars.length)];
+    el.style.cssText = `
+      position: fixed;
+      left: ${e.clientX + 30}px;
+      top: ${e.clientY + 30}px;
+      color: #7dcbff;
+      font-family: monospace;
+      font-size: 14px;
+      pointer-events: none;
+      z-index: 9998;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: translate(-50%, -50%);
+    `;
+    document.body.appendChild(el);
+
+    requestAnimationFrame(() => {
+      el.style.opacity = '0';
+      el.style.transform = `translate(
+        calc(-50% + ${(Math.random() - 0.5) * 30}px),
+        calc(-50% - ${Math.random() * 20 + 10}px)
+      )`;
+    });
+
+    setTimeout(() => el.remove(), 600);
+  });
+</script>
+
+<div class='ascii'><pre>
+.    .  ...                    dKKXXXXO...cKKXXXKkdOXXXk'....:KXXXXXXXXXXX0l.....,.......
+...  ...      .'               'xKXXXXXxcc:0XXXXX0;:xXx,...,dKXOolcccldkKXXXK,.............
+..........    ..      ..,:c:;....,:lk0XXXO;'oKXXKl.'.o,:,,oOxo;....;cd000Kko;',..............
+..............   ..;lkKXXXXXXX0xdo'oNd';dk....;ddlOocXKo;x,.';;cox0XKkdl:'..''..........,....
+...........'.'..cxKXXXKOdc,';:kdokxl,...;lcolc:;...:lkKWlWKoOOxdolc;'',,....................  ..
+........'...'lkKXXX0dc:;....'0MKoWx..'lO000000OdOx;...;ooONXl.'';c;,,,''......'...............''.
+ ....''...:xKXXXKxc...',..c0dMM0k:..o0000000000Odkkc...;xddKo',';;;;;;;','.......'......   ... ....
+.......''dKXXXKx:.........OMKxOx...;00OkkkkkkkkkO000kkkkkO000Okxol::,;,''''''...........'..    ..    ..
+.........:dkO0OxKK0000OOOlXXWcx'...,kkO000kk000000000000kddkkkk0000Oxoc,''',,...........'......;c.......
+..........',;;',;;,;::;,''xWXokk,lx00000kkO000000000000000OxO0000000KXNXOo;,''',''''',;;c;''.........'..
+   ....';'..',;::clc:::;,,'lN0dk000000Ok00000000000000000000xk00KKXNWWWWWWNKd:;;,;;:;,,:l;'...'..''..'..
+     ...'''''';;clcclo::::;;oO000000000000Ox0000000000000000K0kXNWWWWWWWWNNXK0xc:c:;;;,,''.'',,''....,''
+       ...',;;;,,;:clcodOxd0XXNNXXK0000000dO000000000000KKXNNWXkNWWWWNNXKK000000kc::;,''''''..'....'....
+       . ...',;;;,;:lloooONWWWWWWWNX000000dO0000000KKXXNNWWWWWWKONXXKK000000000000kcc,','..':'..........
+       ....'...',:cclcclXWWWWWWWWWWNK00000dO0KKXXNNNWWWWNNNXXXKKkx000000000000000000o'.......':,........
+      ...........',:::lNWWWWWWWWWWWNK000KKxOXXXXXXXXXX0KK00000000ok000000000OO0000000x,.......,.........
+.    ............'':ooXWWWWWWWWWWWWX000000Ox0000000000OO0000000000d0000000000Ox0000000k,................
+.  ...'.........'cdxl0WWWWWWWWWWWWNK0000000o00000000000kk000000000dx00000x0000OoO000000k;....',.........
+.  .......''''cdkkkokNWWWWWWWWWWWWX00000000xd00000000000d000000000d:xkkkOlok000Ook000000O,...',...'.'..
+     .......,kkkxdxx0NWWWWWWWWWWWXK0000O000Ook0000000000xk00000000doodOOOkodox00koO000000O:'.......... .
+       .....;Okooko00KNWWWWWWWWNK000000d00kkdcxkkO0000000x00000000xdKxd0000d0kx00xoO000000xxo,......
+..    .......loxkxx000KXNNNNNNX0O0000kkodkO0OloO000000000x0000000OdxWN0kk000xKKkkxdl0000000dkx........
+....'..',...,xOOkoO0000000K0000xx000k00xxO000dxkx00000000x0000000xl0WWWNXOkkOkKWWXOxd000000Oo:.....,....
+'.........,;OOOOkd0000O00000000kd00000dOKxk000xX0xx000000xO00000kxdWWWNXKK0OxxdOWWWNkk000000k...........
+....''',,;,;OOOOkd0000Ok0000000Oo0000xkKNXkx00xNWX0dxO000xk0000kxoKW0l:,;;;;;;,;;co0Xd0000000c..........
+.....'',,;;,xOOkld00000d00000000ok00OxKNWWNXkkkxXKOxdodxOdk000kxodOXWWWdxxxxxxxxxkWWWx0000000k,.......',
+  . .''...';;kkcxx00000dx0000000ddOOxKNWWWN0xl,,,;:oOXN0klO0OxxoxO0kk0Kk0XXXXXXXXkWWWkO00000O0:....',...
+.............::OOd00000kok000000OlxdKWWKxc,,:lodxxxdKWWWXx0kxdoddddxkkOXkKXXXXXXKOWWWOk0000kx0d..;,.....
+   .........';O00d000000oo0000000xoXWXxodcdxxkO00KXXxWWWXoxdkXWWWWWWWWWWW0O0XXX0kNWWWOk0000d00k.........
+....',,',;;;cO0kcc000000kod0000000xNWWWWWkkKXXXXXXXXxNWWO0KWWWWWWWWWWWWWWWWXKKKXWWWWWk0000kx0x0,''.....
+''''''...''o0Ooc;ck000000dodO000000xNWWWWWKOKXXXXXX0kWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWk000xx00d0,........
+.........,d0dll,::d000000OoooO000000xNWWWWWWK0OO0OO0WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWXx0xdd000cO,..'''.''
+.........oxllo:;;ooO000000xooox000000kKWWWWWWWWNXNWWWWWWWWWWWWW0kkO0XWWWWWWWWWWWWWWW0Oldxk00O,d,,:,'....
+........colooc:::kko0000000xllooxO0000OkXWWWWWWWWWWWWWWWWWWWWWOkO0000WWWWWWWWWWWWWWWXodxxO00l':'........
+.'.....:llooo::;kOx;x0000000xlcloodk0000kOXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWNO:lxxk00d'.'.........
+......;cooool;;xOOllck0000000koc:clodxkO00kO0NWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWOc:;oxk00d,'.....'.....
+.....'coooooc,xOOk:oolO0000000Odlcc:ccllodxxxddxkNWWWWWWWWWWWWWWWWWWWWWWWWWWWWKkolcc:dx00o:,.....'......
+.....coooool;xOOOllooolk00Ox0000xolccccc:dkkkk0KWWWWWWWWWWWWWWWWWWWWWWWWWWWK000kxxdllxOdc;,'.....'......
+.''''looool:kOOOdcooooold00xlk000OdolcccccoOKKKKKKXXXNNNNWWWWWWWWWWWWNX0kxkxd000Okocodl:;;,'............
+.,,';ooooclO0OOx'coooooollk0kcok000kxolllllcd0KKKKKKKKKKKKKKKKKKKKkl:c0XXdx0OdxkxOkxxdddl:,''';c;;'...,.
+....,ooocoO000k;,:oooooooold0Ollldk00Okdolllc:lodddddc;:xl;'',;odl.'KdNNNXkdO0xooxxkOkxxxdc;;;,,''''....
+.....llcx0000k;:c;coooooooolldOdlolloxkOOkkdoolccc:xO;..dMWXkl'.oc.xMc;000O0ddO0kddxkOOOxddoc::;;;;c;''.
+.....'lk0000x;;;;:;looooooooooloollooolloddxxxxxddocc:,;,:kKWWWk:;,W0:cXN0kddxook0OddodxOOxddlllc:::,,''
+.....d00000d:l;;::;;loooooooooooolc:ccloooooollx0KKKXNWWWd.,d0O0NKNXkWWWWWWW0occ:ok00Odollxkdlllllc::;;,
+...:k0000Oocool;:;;;;coooooooooooodooolooooooONWWWWWWWWWNo0WWWWW000kWWWWX:dKWNkxO0xddk000Oclodddlllccc:;
+.:x00000k:oxolooc:ccc:cooooodddddddddddooooxNWWWWWWWWWNo'.XWWWWWWWWWWWWWWO..;oXKxkOOkoodxocolllddollllll
+kO0000Oo:llok0kxdc;;;;;,:ldddddddddddddddo0WWWWWWWWWWOl..:WWWWWWWWWWWWWWWO...:OOXdkkkOkdlldddddodxkxdool
+dOOO0d;,;::::cdO000kxdolc::coddxddddddddo0WWWWWWWWWXxXK.,ckklodxkOKNWWXklc:N0oMdcKodkkkdooooodddolloxdoo
+.'co;,;,;,;:::::ldk0000000Okxxxxxxdddddlx00KNWWWWK0:.0NxMMMMNkllooccoocoockMMKOK.,ollxodxxdddddxddollodd
+....'okxlodddddxdddodxk00000000000000kkxKKNNK000Nx,..0NkMMMMMMWOllodxkOOooMMMMWO.'c;dcllloxxdccclllllccc
+....,000OxxdooddxxxddddoddxxkO000000d0MMMWKKKK0:clc..;OXMMMMMMMMWOcoodxoldWMMMMMl'xk0k:cccclocccccclllcc
+ ...;00000000kdolloddxdddxdl;cdxxxxxcXMMMMMMMMO;cl,.llNMMMMMMMMMMWcooooloclWMMMMo;NOOdllccccclcc:cccloll
+</pre>
+</div>
+  <div class="term">
+
+  <span class="sep">────────────────────────────────────────────────────────────────────────────</span><br><br>
+
+  <span class="bright">BRONYA</span>  
+
+  <div class="sep">────────────────────────────────────────────────────────────────────────────</div>
+
+
+  <div class="link-row">
+    <span class="link-label">github   //</span>
+    <a class="link-val" href="https://github.com/tebii">github.com/tebii</a>
+  </div>
+  <div class="link-row">
+    <span class="link-label">blog     //</span>
+    <a class="link-val" href="https://blog.tebii.dev">blog.tebii.dev (theres nothing here)</a>
+  </div>
+  <div class="link-row">
+    <span class="link-label">twitter    //</span>
+    <a class="link-val" href="https://x.com/k_1ttyy">x.com/k_1ttyy</a>
+  </div>
+
+
+</div>
+
+
